@@ -83,7 +83,7 @@
                         reader.onload = function(e) {
                             const base64Data = e.target.result.split(',')[1];
                             // COLOQUE SEU LINK DO GOOGLE ABAIXO:
-                            const url = "https://script.google.com/macros/s/AKfycbyRnOSr7Az7TJaSZkeqFKD7fXu9YXunjbWSz4-tnma37ydzC8NllQQ_EJYqcPsriGRKSA/exec";
+                            const url = "https://script.google.com/macros/s/AKfycbxYX4NDk6VbrvIYdWShZBWBOEvKz5huzyeWkz-CnNvhoR5y49gB6418oOf90f8mfido/exec";
                             /*&nome=${encodeURIComponent(nome)}&momento=${encodeURIComponent(momento)}*/
                             fetch(url + `?filename=${encodeURIComponent(file.name)}&type=${file.type}`, {
                                 method: "POST",
