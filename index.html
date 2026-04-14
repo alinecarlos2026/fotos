@@ -5,9 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body { font-family: sans-serif; text-align: center; padding: 20px; background-color: #f9f9f9; }
-        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        input, select, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
-        button { background-color: #d4a373; color: white; border: none; font-weight: bold; cursor: pointer; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background-color: #d4a373; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:disabled { background-color: #ccc; }
+        
+        /* Estilo da Barra de Progresso */
+        #progressContainer { display:none; width: 100%; background-color: #eee; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        #progressBar { width: 0%; height: 20px; background-color: #d4a373; text-align: center; color: white; font-size: 12px; line-height: 20px; transition: width 0.3s; }
     </style>
 </head>
 <body>
@@ -16,52 +21,85 @@
         <p>José & Noiva - Junho 2026</p>
         
         <input type="text" id="nome" placeholder="Seu nome" required>
+        
         <select id="momento">
             <option value="Cerimonia">Cerimônia</option>
             <option value="Festa">Festa</option>
             <option value="Outros">Outros</option>
         </select>
-        <input type="file" id="arquivo" accept="image/*,video/*" required>
+
+        <input type="file" id="arquivo" accept="image/*,video/*" multiple required>
+
+        <div id="progressContainer">
+            <div id="progressBar">0%</div>
+        </div>
         
-        <button onclick="enviarFoto()" id="btnEnviar">Enviar Foto</button>
-        <p id="status"></p>
+        <button onclick="enviarFoto()" id="btnEnviar">Enviar Fotos</button>
+        <p id="status" style="font-size: 14px; color: #666;"></p>
     </div>
 
     <script>
-        function enviarFoto() {
-    const btn = document.getElementById('btnEnviar');
-    const status = document.getElementById('status');
-    const file = document.getElementById('arquivo').files[0];
-    const nome = document.getElementById('nome').value;
-    const momento = document.getElementById('momento').value;
+        async function enviarFoto() {
+            const btn = document.getElementById('btnEnviar');
+            const status = document.getElementById('status');
+            const files = document.getElementById('arquivo').files;
+            const nome = document.getElementById('nome').value;
+            const momento = document.getElementById('momento').value;
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
 
-    if(!file || !nome) { alert("Preencha tudo!"); return; }
+            if(files.length === 0 || !nome) { 
+                alert("Por favor, preencha seu nome e selecione ao menos uma foto!"); 
+                return; 
+            }
 
-    btn.disabled = true;
-    status.innerText = "Enviando... aguarde.";
+            // Inicia o estado de envio
+            btn.disabled = true;
+            progressContainer.style.display = "block";
+            progressBar.style.width = "0%";
+            progressBar.innerText = "0%";
+            
+            const total = files.length;
+            
+            // Loop para enviar um por um (evita travar o Google Script)
+            for (let i = 0; i < total; i++) {
+                const file = files[i];
+                status.innerText = `Enviando ${i + 1} de ${total}: ${file.name}`;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        // Transformar o arquivo em uma string Base64 (padrão para web)
-        const base64Data = e.target.result.split(',')[1];
-        const url = "https://script.google.com/macros/s/AKfycbxYX4NDk6VbrvIYdWShZBWBOEvKz5huzyeWkz-CnNvhoR5y49gB6418oOf90f8mfido/exec";
+                try {
+                    await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const base64Data = e.target.result.split(',')[1];
+                            // COLOQUE SEU LINK DO GOOGLE ABAIXO:
+                            const url = "https://script.google.com/macros/s/AKfycbxYX4NDk6VbrvIYdWShZBWBOEvKz5huzyeWkz-CnNvhoR5y49gB6418oOf90f8mfido/exec";
 
-        fetch(url + `?filename=${encodeURIComponent(file.name)}&nome=${encodeURIComponent(nome)}&momento=${encodeURIComponent(momento)}&type=${file.type}`, {
-            method: "POST",
-            body: base64Data
-        })
-        .then(res => res.text())
-        .then(txt => {
-            status.innerText = "Enviado com sucesso! ❤️";
+                            fetch(url + `?filename=${encodeURIComponent(file.name)}&nome=${encodeURIComponent(nome)}&momento=${encodeURIComponent(momento)}&type=${file.type}`, {
+                                method: "POST",
+                                body: base64Data
+                            })
+                            .then(res => res.text())
+                            .then(txt => {
+                                // Atualiza a barra de progresso visualmente
+                                const percentual = Math.round(((i + 1) / total) * 100);
+                                progressBar.style.width = percentual + "%";
+                                progressBar.innerText = percentual + "%";
+                                resolve(txt);
+                            })
+                            .catch(err => reject(err));
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                } catch (error) {
+                    console.error("Erro no envio:", error);
+                    status.innerText = "Ocorreu um erro em um dos arquivos. Tentando o próximo...";
+                }
+            }
+
+            status.innerText = "Uhuul! Tudo enviado com sucesso! ❤️";
             btn.disabled = false;
-        })
-        .catch(err => {
-            status.innerText = "Erro no envio.";
-            btn.disabled = false;
-        });
-    };
-    reader.readAsDataURL(file); // Mudamos para DataURL para facilitar a conversão
-}
+            document.getElementById('arquivo').value = ""; // Limpa a seleção de arquivos
+        }
     </script>
 </body>
 </html>
