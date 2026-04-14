@@ -59,6 +59,11 @@
                 return; 
             }
 
+            if(files.length === 0) { 
+                alert("Selecione ao menos uma foto!"); 
+                return; 
+            }
+
             // Inicia o estado de envio
             btn.disabled = true;
             progressContainer.style.display = "block";
