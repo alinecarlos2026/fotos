@@ -96,39 +96,57 @@
         .botao-upload:hover {
             opacity: 0.8;
         }
+
+        #imgMomo{
+            display: flex;
+            width: 100%;
+            
+            justify-content: right;
+        }
+
+        #imgEu{
+            display: flex;
+            width: 100%;
+           
+            justify-content: left;
+        }
     </style>
 </head>
 
 <body>
     <h1> Memórias do Nosso<br> Grande Dia<br> - Aline & Carlos -</h1>
     <div class="card">
-
-        <h2>📷 Compartilhe seu olhar!</h2>
-        <p> Ficamos muito felizes em ter você aqui com a gente! Para que possamos guardar cada pedacinho desse dia
-            inesquecível, compartilhe aqui as fotos que você fez. Queremos ver o nosso casamento através do seu olhar!
-            Muito obrigado por fazer parte da nossa história. </p>
-
-        <!--
-        <input type="text" id="nome" placeholder="Seu nome" required>
         
-        <select id="momento">
-            <option value="Cerimonia">Cerimônia</option>
-            <option value="Festa">Festa</option>
-            <option value="Outros">Outros</option>
-        </select>
-        -->
-        <!--<h6> Selecione as fotos usando o botão abaixo --procurar/Escolher Arquivo-- .</h6> -->
-        <label for="arquivo" class="botao-upload">
-            Escolher Fotos
-        </label>
-        <input type="file" id="arquivo" accept="image/*,video/*" multiple required>
+        <div id="imgEu"><img src="eu.jpg" alt="eu" width="25%"></div>
+        <div>
+            <h2>📷 Compartilhe seu olhar!</h2>
+            <p> Ficamos muito felizes em ter você aqui com a gente! Para que possamos guardar cada pedacinho desse dia
+                inesquecível, compartilhe aqui as fotos que você fez. Queremos ver o nosso casamento através do seu olhar!
+                Muito obrigado por fazer parte da nossa história. </p>
 
-        <div id="progressContainer">
-            <div id="progressBar" style="text-align: center;">0%</div>
+            <!--
+            <input type="text" id="nome" placeholder="Seu nome" required>
+            
+            <select id="momento">
+                <option value="Cerimonia">Cerimônia</option>
+                <option value="Festa">Festa</option>
+                <option value="Outros">Outros</option>
+            </select>
+            -->
+            <!--<h6> Selecione as fotos usando o botão abaixo --procurar/Escolher Arquivo-- .</h6> -->
+            <label for="arquivo" class="botao-upload">
+                Escolher Fotos
+            </label>
+            <input type="file" id="arquivo" accept="image/*,video/*" multiple required>
+
+            <div id="progressContainer">
+                <div id="progressBar" style="text-align: center;">0%</div>
+            </div>
+
+            <button onclick="enviarFoto()" id="btnEnviar">Enviar Fotos</button>
+            <p id="status" style="font-size: 14px; color: #666;"></p>
         </div>
-
-        <button onclick="enviarFoto()" id="btnEnviar">Enviar Fotos</button>
-        <p id="status" style="font-size: 14px; color: #666;"></p>
+         <div id="imgMomo"><img src="momo.jpg" alt="eu" width="25%"></div>
     </div>
 
     <script>
