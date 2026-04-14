@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fotos do Nosso Casamento</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 20px; background-color: #f9f9f9; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        input, select, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
+        button { background-color: #d4a373; color: white; border: none; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>📷 Compartilhe seu olhar!</h2>
+        <p>José & Noiva - Junho 2026</p>
+        
+        <input type="text" id="nome" placeholder="Seu nome" required>
+        <select id="momento">
+            <option value="Cerimonia">Cerimônia</option>
+            <option value="Festa">Festa</option>
+            <option value="Outros">Outros</option>
+        </select>
+        <input type="file" id="arquivo" accept="image/*,video/*" required>
+        
+        <button onclick="enviarFoto()" id="btnEnviar">Enviar Foto</button>
+        <p id="status"></p>
+    </div>
+
+    <script>
+        function enviarFoto() {
+    const btn = document.getElementById('btnEnviar');
+    const status = document.getElementById('status');
+    const file = document.getElementById('arquivo').files[0];
+    const nome = document.getElementById('nome').value;
+    const momento = document.getElementById('momento').value;
+
+    if(!file || !nome) { alert("Preencha tudo!"); return; }
+
+    btn.disabled = true;
+    status.innerText = "Enviando... aguarde.";
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        // Transformar o arquivo em uma string Base64 (padrão para web)
+        const base64Data = e.target.result.split(',')[1];
+        const url = "https://script.google.com/macros/s/AKfycbxYX4NDk6VbrvIYdWShZBWBOEvKz5huzyeWkz-CnNvhoR5y49gB6418oOf90f8mfido/exec";
+
+        fetch(url + `?filename=${encodeURIComponent(file.name)}&nome=${encodeURIComponent(nome)}&momento=${encodeURIComponent(momento)}&type=${file.type}`, {
+            method: "POST",
+            body: base64Data
+        })
+        .then(res => res.text())
+        .then(txt => {
+            status.innerText = "Enviado com sucesso! ❤️";
+            btn.disabled = false;
+        })
+        .catch(err => {
+            status.innerText = "Erro no envio.";
+            btn.disabled = false;
+        });
+    };
+    reader.readAsDataURL(file); // Mudamos para DataURL para facilitar a conversão
+}
+    </script>
+</body>
+</html>
