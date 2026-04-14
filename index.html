@@ -49,16 +49,16 @@
             const btn = document.getElementById('btnEnviar');
             const status = document.getElementById('status');
             const files = document.getElementById('arquivo').files;
-            const nome = document.getElementById('nome').value;
-            const momento = document.getElementById('momento').value;
+            //const nome = document.getElementById('nome').value;
+            //const momento = document.getElementById('momento').value;
             const progressContainer = document.getElementById('progressContainer');
             const progressBar = document.getElementById('progressBar');
-
+            /*
             if(files.length === 0 || !nome) { 
                 alert("Por favor, preencha seu nome e selecione ao menos uma foto!"); 
                 return; 
             }
-
+            */
             if(files.length === 0) { 
                 alert("Selecione ao menos uma foto!"); 
                 return; 
@@ -84,8 +84,8 @@
                             const base64Data = e.target.result.split(',')[1];
                             // COLOQUE SEU LINK DO GOOGLE ABAIXO:
                             const url = "https://script.google.com/macros/s/AKfycbyRnOSr7Az7TJaSZkeqFKD7fXu9YXunjbWSz4-tnma37ydzC8NllQQ_EJYqcPsriGRKSA/exec";
-
-                            fetch(url + `?filename=${encodeURIComponent(file.name)}&nome=${encodeURIComponent(nome)}&momento=${encodeURIComponent(momento)}&type=${file.type}`, {
+                            /*&nome=${encodeURIComponent(nome)}&momento=${encodeURIComponent(momento)}*/
+                            fetch(url + `?filename=${encodeURIComponent(file.name)}&type=${file.type}`, {
                                 method: "POST",
                                 body: base64Data
                             })
